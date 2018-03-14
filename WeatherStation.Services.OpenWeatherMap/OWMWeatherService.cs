@@ -22,7 +22,7 @@ namespace WeatherStation.Services.OpenWeatherMap
         }
 
         public async Task<Forecast> GetTodaysWeatherAsync(Location location)
-        { 
+        {
             HttpClient client = new HttpClient();
 
             client.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
@@ -38,14 +38,20 @@ namespace WeatherStation.Services.OpenWeatherMap
             {
                 JObject json = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                return new Forecast(location, json["main"].Value<double>("temp"), DateTime.Today);
+                return new Forecast(
+                    location,
+                    json["main"].Value<double>("temp"),
+                    json["weather"].First.Value<string>("main"),
+                    $"http://openweathermap.org/img/w/{ json["weather"].First.Value<string>("icon")}.png",
+                    (WeatherCodes)json["weather"].First.Value<int>("id"),
+                    DateTime.Today);
             }
             catch (Exception e)
             {
                 Trace.WriteLine(e.Message);
                 throw;
             }
-            
+
 
 
             //example response:

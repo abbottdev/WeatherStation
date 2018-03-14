@@ -15,14 +15,22 @@
                                  Padding="8">
             <StackPanel>
                 <TextBlock Margin="16 16 12 8" FontSize="16" Text="{Binding LocationName, FallbackValue='N/A'}"></TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding WeatherDescription, FallbackValue=Description}"></TextBlock>
+                    <Image Height="25" Width="25" Source="{Binding WeatherIconUrl}" VerticalAlignment="Center"></Image>
+                </StackPanel>
+                
                 <Separator Style="{StaticResource MaterialDesignLightSeparator}"/>
-                <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                <Grid>
+                    <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                              Value="20" Foreground="MediumPurple" Margin="3"
                              IsIndeterminate="True" Visibility="{Binding IsBusy, Converter={StaticResource boolToVis}}"
                              x:Name="IndeterminateToDeterminateCircularProgress"/>
-                    <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
-                </StackPanel>
+                        
+                        <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
