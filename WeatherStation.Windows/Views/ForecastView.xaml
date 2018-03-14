@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="WeatherStation.Windows.Views.ForecastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:WeatherStation.Windows.ViewModels"
+             xmlns:local="clr-namespace:WeatherStation.Windows.Views"
+             mc:Ignorable="d" x:Name="theView" DataContext="{Binding ElementName=theView, Path=ViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance Type=vm:ForecastViewModel, IsDesignTimeCreatable=False}">
+    <Grid>
+        <StackPanel>
+            <TextBlock Text="The Temp is:"></TextBlock>
+            <TextBlock FontSize="20" Text="{Binding Temperature, FallbackValue=0, StringFormat={}{0:F2}}"></TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>
