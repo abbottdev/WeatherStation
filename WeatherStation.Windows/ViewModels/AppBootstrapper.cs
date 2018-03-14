@@ -23,17 +23,8 @@ namespace WeatherStation.Windows.ViewModels
         public AppViewModel()
         {
             Router = new RoutingState();
-            Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 
-
-            //Todo: register views.
-            //Locator.CurrentMutable.Register(() => new UpcomingMoviesListView(), typeof(IViewFor<UpcomingMoviesListViewModel>));
-            //Locator.CurrentMutable.Register(() => new UpcomingMoviesCellView(), typeof(IViewFor<UpcomingMoviesCellViewModel>));
-            Locator.CurrentMutable.Register(() => new ForecastView(), typeof(IViewFor<ForecastViewModel>));
-            Locator.CurrentMutable.Register(() => new SelectLocationView(), typeof(IViewFor<SelectLocationViewModel>));
-
-            Locator.CurrentMutable.Register(() => new AkavacheConfigurationService(), typeof(IConfigurationService));
-            Locator.CurrentMutable.Register(() => new OWMWeatherService(), typeof(IWeatherService));
+            RegisterDependencies();
 
             this.ResetSettings = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -64,7 +55,7 @@ namespace WeatherStation.Windows.ViewModels
                     this
                      .Router
                      .NavigateAndReset
-                     .Execute(new SelectLocationViewModel(this, Locator.Current.GetService<IConfigurationService>()))
+                     .Execute(new SelectLocationViewModel(this, Locator.Current.GetService<IConfigurationService>(), Locator.Current.GetService<IGeocodeService>()))
                      .Subscribe();
                 }
             });
@@ -72,6 +63,20 @@ namespace WeatherStation.Windows.ViewModels
             this.LoadCommand.Execute().Subscribe();
         }
 
+        private void RegisterDependencies()
+        {
+            Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 
+
+            //Todo: register views.
+            //Locator.CurrentMutable.Register(() => new UpcomingMoviesListView(), typeof(IViewFor<UpcomingMoviesListViewModel>));
+            //Locator.CurrentMutable.Register(() => new UpcomingMoviesCellView(), typeof(IViewFor<UpcomingMoviesCellViewModel>));
+            Locator.CurrentMutable.Register(() => new ForecastView(), typeof(IViewFor<ForecastViewModel>));
+            Locator.CurrentMutable.Register(() => new SelectLocationView(), typeof(IViewFor<SelectLocationViewModel>));
+
+            Locator.CurrentMutable.Register(() => new AkavacheConfigurationService(), typeof(IConfigurationService));
+            Locator.CurrentMutable.Register(() => new OWMWeatherService(), typeof(IWeatherService));
+            Locator.CurrentMutable.Register(() => new GoogleGeocoderService(), typeof(IGeocodeService));
+        }
     }
 }

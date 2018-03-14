@@ -104,7 +104,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BooleanToVisConverter.cs" />
     <Compile Include="Services\AkavacheConfigurationService.cs" />
+    <Compile Include="Services\GoogleGeocoderService.cs" />
+    <Compile Include="Services\HardcodedAddressService.cs" />
     <Compile Include="ViewModels\AppBootstrapper.cs" />
     <Compile Include="ViewModels\ForecastViewModel.cs" />
     <Compile Include="ViewModels\SelectLocationViewModel.cs" />

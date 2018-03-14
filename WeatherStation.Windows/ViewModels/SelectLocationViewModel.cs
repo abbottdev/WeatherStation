@@ -17,7 +17,7 @@ namespace WeatherStation.Windows.ViewModels
         public string UrlPathSegment => "select-location";
 
         private IConfigurationService configurationService;
-
+        private IGeocodeService geocoder;
         string searchTerm;
         public string SearchTerm
         {
@@ -25,11 +25,11 @@ namespace WeatherStation.Windows.ViewModels
             set { this.RaiseAndSetIfChanged(ref searchTerm, value); }
         }
 
-        public ReactiveCommand<string, List<Location>> ExecuteSearch { get; protected set; }
+        public ReactiveCommand<string, IEnumerable<Location>> ExecuteSearch { get; protected set; }
         public ReactiveCommand<Unit, Unit> SaveSelectedLocation { get; private set; }
 
-        ObservableAsPropertyHelper<List<Location>> _SearchResults;
-        public List<Location> SearchResults => _SearchResults.Value;
+        ObservableAsPropertyHelper<IEnumerable<Location>> searchResults;
+        public IEnumerable<Location> SearchResults => searchResults.Value;
 
         private Location selectedLocation;
         private ObservableAsPropertyHelper<bool> isSearching;
@@ -44,20 +44,22 @@ namespace WeatherStation.Windows.ViewModels
         public IScreen HostScreen { get; }
         public bool IsSearching => this.isSearching.Value;
 
-        public SelectLocationViewModel(AppViewModel screen, IConfigurationService configurationService)
+        public SelectLocationViewModel(AppViewModel screen, IConfigurationService configurationService, IGeocodeService geocoder)
         {
-            this.configurationService = configurationService;
             this.HostScreen = screen;
 
-            ExecuteSearch = ReactiveCommand.CreateFromTask<string, List<Location>>(
-                searchTerm => GeocodeAddress(searchTerm)
+            this.configurationService = configurationService;
+            this.geocoder = geocoder;
+
+            ExecuteSearch = ReactiveCommand.CreateFromTask<string, IEnumerable<Location>>(
+                async searchTerm => await geocoder.SearchForLocationsAsync(searchTerm)
             );
 
             this.SaveSelectedLocation = ReactiveCommand.CreateFromTask(async () =>
             {
                 await configurationService.ChangeSavedLocationAsync(this.SelectedLocation);
 
-                //Attempt to re-load
+                //Attempt to re-load app
                 screen.LoadCommand.Execute().Subscribe();
 
             }, this.WhenAny(vm => vm.SelectedLocation, location => location.GetValue() != null));
@@ -71,19 +73,9 @@ namespace WeatherStation.Windows.ViewModels
 
             this.ExecuteSearch.IsExecuting.ToProperty(this, x => x.IsSearching, out this.isSearching, false);
 
-            _SearchResults = ExecuteSearch.ToProperty(this, x => x.SearchResults, new List<Location>());
+            searchResults = ExecuteSearch.ToProperty(this, x => x.SearchResults, new List<Location>());
         }
 
-        private Task<List<Location>> GeocodeAddress(string searchTerm)
-        {
-            var locations = new Location[] { new Location(54, 54, "Russia"),
-                    new Location(53.800726, -1.5492207, "Leeds, UK"),
-                    new Location(53.8519224,-1.6841584, "Rawdon, Leeds, UK"),
-                    new Location(53.5876143,-2.5370859, "Bolton, UK")
-                }.ToList();
-
-
-            return Task.FromResult(locations.Where(l => l.DisplayName.Contains(searchTerm)).ToList());
-        }
+        
     }
 }

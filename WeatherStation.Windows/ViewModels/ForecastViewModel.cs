@@ -19,6 +19,7 @@ namespace WeatherStation.Windows.ViewModels
         private IWeatherService service;
         private ReactiveCommand<Unit, Forecast> refreshWeatherCommand;
         private DateTime forecastDate;
+        private ObservableAsPropertyHelper<bool> isBusy;
 
         public ReactiveCommand RefreshWeather
         {
@@ -49,6 +50,7 @@ namespace WeatherStation.Windows.ViewModels
         }
 
         public string UrlPathSegment => "forecasts/" + forecastDate.ToString();
+        public bool IsBusy => this.isBusy.Value;
 
         public IScreen HostScreen { get; }
 
@@ -60,6 +62,8 @@ namespace WeatherStation.Windows.ViewModels
 
             this.refreshWeatherCommand = ReactiveCommand.CreateFromTask(async () => await service.GetTodaysWeatherAsync(location));
             this.refreshWeatherCommand.Subscribe(forecast => this.UpdateFromForecast(forecast));
+
+            this.refreshWeatherCommand.IsExecuting.ToProperty(this, vm => vm.IsBusy, out this.isBusy);
 
             this.WhenNavigatedTo(() => Task.Run(async () =>
             {

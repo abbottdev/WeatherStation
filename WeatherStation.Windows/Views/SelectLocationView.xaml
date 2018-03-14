@@ -16,7 +16,14 @@
             <materialDesign:Card Margin="5" Padding="8">
                 <StackPanel>
                     <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource MaterialDesignCaptionTextBlock}">Begin typing a location to find it from the dropdown</TextBlock>
-                    <TextBox Margin="10" Padding="5" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <Grid>
+                        <TextBox Padding="5" Margin="25,0,25,0" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <ProgressBar HorizontalAlignment="Right" Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Value="20" Visibility="{Binding IsSearching, Converter={StaticResource boolToVis}}"
+                             IsIndeterminate="True"
+                             x:Name="IndeterminateToDeterminateCircularProgress"/>
+                    </Grid>
+                    
                     <ListBox Height="100" ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedLocation}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="DisplayName"></ListBox>
                     <Button Margin="5" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding SaveSelectedLocation}" Content="SAVE"></Button>
                 </StackPanel>
