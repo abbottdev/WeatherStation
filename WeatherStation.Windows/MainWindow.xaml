@@ -6,11 +6,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherStation.Windows"
         mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         x:Name="theWindow" DataContext="{Binding ElementName=theWindow, Path=AppViewModel}"
         Title="MainWindow" Height="350" Width="525">
-    <StackPanel>
-        <TextBlock Text="Weather FORECAST"></TextBlock>
-        <Button Content="Reset settings" Command="{Binding ResetSettings}"></Button>
-        <rxui:RoutedViewHost Router="{Binding Router}"></rxui:RoutedViewHost>
-    </StackPanel>
+
+    <materialDesign:DialogHost Identifier="RootDialog" >
+        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"><!--IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">-->
+            <materialDesign:DrawerHost.LeftDrawerContent>
+                <DockPanel MinWidth="212">
+                    <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
+                                    DockPanel.Dock="Top"
+                                    HorizontalAlignment="Right" Margin="16"
+                                    IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
+                    <StackPanel>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp" Command="{Binding ResetSettings}">
+                            CHANGE LOCATION
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </materialDesign:DrawerHost.LeftDrawerContent>
+            <DockPanel>
+
+                <materialDesign:ColorZone Mode="PrimaryDark" Padding="12" CornerRadius="3" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="2,2,2,10" DockPanel.Dock="Top">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False" x:Name="MenuToggleButton"/>
+                            <TextBlock VerticalAlignment="Center" Margin="16 0 0 0">Weather Station</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </materialDesign:ColorZone>
+
+                <ScrollViewer Margin="5, 0">
+                    <rxui:RoutedViewHost Router="{Binding Router}"></rxui:RoutedViewHost>
+                </ScrollViewer>
+            </DockPanel>
+        </materialDesign:DrawerHost>
+    </materialDesign:DialogHost>
+
+
+
 </Window>

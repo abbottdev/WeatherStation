@@ -4,17 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WeatherStation.Windows.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:WeatherStation.Windows.ViewModels"
              mc:Ignorable="d" 
              x:Name="theView" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False,Type=vm:SelectLocationViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel>
-            <TextBlock>Select Location</TextBlock>
-            <TextBlock>Begin typing a location to find it from the dropdown</TextBlock>
-            <TextBox Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <ListBox Height="150" ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedLocation}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="DisplayName"></ListBox>
-            <Button Command="{Binding SaveSelectedLocation}" Content="Save"></Button>
+            <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}">Select Location</TextBlock>
+           
+            <materialDesign:Card Margin="5" Padding="8">
+                <StackPanel>
+                    <TextBlock TextWrapping="WrapWithOverflow" Style="{StaticResource MaterialDesignCaptionTextBlock}">Begin typing a location to find it from the dropdown</TextBlock>
+                    <TextBox Margin="10" Padding="5" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    <ListBox Height="100" ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedLocation}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="DisplayName"></ListBox>
+                    <Button Margin="5" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding SaveSelectedLocation}" Content="SAVE"></Button>
+                </StackPanel>
+            </materialDesign:Card>
         </StackPanel>
     </Grid>
 </UserControl>

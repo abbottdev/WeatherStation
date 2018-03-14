@@ -4,14 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:WeatherStation.Windows.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:WeatherStation.Windows.Views"
              mc:Ignorable="d" x:Name="theView" DataContext="{Binding ElementName=theView, Path=ViewModel}"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance Type=vm:ForecastViewModel, IsDesignTimeCreatable=False}">
     <Grid>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="The Temp in:" Margin="5" VerticalAlignment="Center"></TextBlock>
-            <TextBlock Text="{Binding LocationName, FallbackValue='N/A'}" Margin="5"  VerticalAlignment="Center"></TextBlock>
-            <TextBlock FontSize="20" VerticalAlignment="Center" Margin="5" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
-        </StackPanel>
+        <materialDesign:Card Background="{DynamicResource PrimaryHueDarkBrush}"
+                                 Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                 Width="200"
+                                 Padding="8">
+            <StackPanel>
+                <TextBlock Margin="16 16 12 8" FontSize="16" Text="{Binding LocationName, FallbackValue='N/A'}"></TextBlock>
+                <Separator Style="{StaticResource MaterialDesignLightSeparator}"/>
+                <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </materialDesign:Card>
     </Grid>
 </UserControl>
