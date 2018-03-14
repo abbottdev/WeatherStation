@@ -6,11 +6,11 @@ namespace WeatherStation.Core.Locations
 {
     public class Location
     {
-        private readonly string DisplayName;
-        public readonly float Latitude;
-        public readonly float Longitude;
+        public string DisplayName { get; }
+        public double Latitude { get; }
+        public double Longitude { get; }
 
-        public Location(float latitude, float longitude, string displayName)
+        public Location(double latitude, double longitude, string displayName)
         {
             this.DisplayName = displayName;
             this.Latitude = latitude;

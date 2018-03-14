@@ -10,6 +10,7 @@
         Title="MainWindow" Height="350" Width="525">
     <StackPanel>
         <TextBlock Text="Weather FORECAST"></TextBlock>
+        <Button Content="Reset settings" Command="{Binding ResetSettings}"></Button>
         <rxui:RoutedViewHost Router="{Binding Router}"></rxui:RoutedViewHost>
     </StackPanel>
 </Window>

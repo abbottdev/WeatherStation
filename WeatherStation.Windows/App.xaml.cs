@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Akavache;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,5 +15,9 @@ namespace WeatherStation.Windows
     /// </summary>
     public partial class App : Application
     {
+        static App()
+        {
+            BlobCache.ApplicationName = "WeatherStation.Wpf";
+        }
     }
 }

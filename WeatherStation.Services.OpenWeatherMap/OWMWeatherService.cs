@@ -12,11 +12,11 @@ using System.Diagnostics;
 
 namespace WeatherStation.Services.OpenWeatherMap
 {
-    public class WeatherService : IWeatherService
+    public class OWMWeatherService : IWeatherService
     {
         private const string apiKey = "3fe2f0443982c01e62473a1e96a7f030";
 
-        public WeatherService()
+        public OWMWeatherService()
         {
 
         }

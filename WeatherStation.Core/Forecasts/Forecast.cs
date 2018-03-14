@@ -20,7 +20,6 @@ namespace WeatherStation.Core.Forecasts
             this.ForecastDate = forecastDate;
             this.Location = location;
         }
-
-
+        
     }
 }

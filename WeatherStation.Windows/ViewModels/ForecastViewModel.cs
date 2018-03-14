@@ -8,13 +8,14 @@ using WeatherStation.Core.Forecasts;
 using ReactiveUI;
 using WeatherStation.Core.Services;
 using System.Reactive;
+using System.Globalization;
 
 namespace WeatherStation.Windows.ViewModels
 {
     public class ForecastViewModel : ReactiveObject, IRoutableViewModel
     {
         private Core.Locations.Location location;
-        private double temperature;
+        private string temperature;
         private IWeatherService service;
         private ReactiveCommand<Unit, Forecast> refreshWeatherCommand;
         private DateTime forecastDate;
@@ -27,7 +28,15 @@ namespace WeatherStation.Windows.ViewModels
             }
         }
 
-        public double Temperature
+        public string LocationName
+        {
+            get
+            {
+                return this.location.DisplayName;
+            }
+        }
+
+        public string Temperature
         {
             get { return temperature; }
             set { this.RaiseAndSetIfChanged(ref this.temperature, value); }
@@ -41,7 +50,7 @@ namespace WeatherStation.Windows.ViewModels
 
         public string UrlPathSegment => "forecasts/" + forecastDate.ToString();
 
-        public IScreen HostScreen { get; } 
+        public IScreen HostScreen { get; }
 
         public ForecastViewModel(IScreen screen, Core.Locations.Location location, IWeatherService service)
         {
@@ -65,7 +74,13 @@ namespace WeatherStation.Windows.ViewModels
 
         private void UpdateFromForecast(Forecast forecast)
         {
-            this.Temperature = forecast.Temperature;
+            bool isMetric = RegionInfo.CurrentRegion.IsMetric;
+
+            //Convert to either Celcius or Fahrenheit based on regional settings.
+            double regionalTemperature = (isMetric) ? forecast.Temperature - 273.15 : forecast.Temperature - 9 / 5 - 459.67;
+            
+            this.Temperature = $"{regionalTemperature:F2} " + ((isMetric) ? "°C" : "°F");
+
             this.ForecastDate = forecast.ForecastDate;
         }
 

@@ -8,9 +8,10 @@
              mc:Ignorable="d" x:Name="theView" DataContext="{Binding ElementName=theView, Path=ViewModel}"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance Type=vm:ForecastViewModel, IsDesignTimeCreatable=False}">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="The Temp is:"></TextBlock>
-            <TextBlock FontSize="20" Text="{Binding Temperature, FallbackValue=0, StringFormat={}{0:F2}}"></TextBlock>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="The Temp in:" Margin="5" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Text="{Binding LocationName, FallbackValue='N/A'}" Margin="5"  VerticalAlignment="Center"></TextBlock>
+            <TextBlock FontSize="20" VerticalAlignment="Center" Margin="5" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>
