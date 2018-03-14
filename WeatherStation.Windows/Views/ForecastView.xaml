@@ -7,31 +7,71 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:WeatherStation.Windows.Views"
              mc:Ignorable="d" x:Name="theView" DataContext="{Binding ElementName=theView, Path=ViewModel}"
-             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance Type=vm:ForecastViewModel, IsDesignTimeCreatable=False}">
+             d:DesignHeight="300" d:DesignWidth="600" d:DataContext="{d:DesignInstance Type=vm:ForecastViewModel, IsDesignTimeCreatable=False}">
     <Grid>
-        <materialDesign:Card Background="{DynamicResource PrimaryHueDarkBrush}"
-                                 Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-                                 Width="200"
-                                 Padding="8">
-            <StackPanel>
-                <TextBlock Margin="16 16 12 8" FontSize="16" Text="{Binding LocationName, FallbackValue='N/A'}"></TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding WeatherDescription, FallbackValue=Description}"></TextBlock>
-                    <Image Height="25" Width="25" Source="{Binding WeatherIconUrl}" VerticalAlignment="Center"></Image>
-                </StackPanel>
-                
-                <Separator Style="{StaticResource MaterialDesignLightSeparator}"/>
-                <Grid>
-                    <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                              Value="20" Foreground="MediumPurple" Margin="3"
                              IsIndeterminate="True" Visibility="{Binding IsBusy, Converter={StaticResource boolToVis}}"
                              x:Name="IndeterminateToDeterminateCircularProgress"/>
-                        
-                        <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
+
+        <DockPanel>
+            
+            <materialDesign:Card Background="{DynamicResource PrimaryHueDarkBrush}" DockPanel.Dock="Left"
+                                 Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                 Width="200"
+                                 Padding="8">
+                <StackPanel>
+                <TextBlock Margin="16 16 12 8" FontSize="16" Text="{Binding LocationName, FallbackValue='N/A'}"></TextBlock>
+                <StackPanel DataContext="{Binding Today}" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:TodaysForecastModel}">
+                    
+                    <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="Today"></TextBlock>
+                    <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding Humidity}"></TextBlock>
+                    <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding Pressure}"></TextBlock>
+                    <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding Sunrise}"></TextBlock>
+                    <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding Sunset}"></TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding WeatherDescription, FallbackValue=Description}"></TextBlock>
+                        <Image Height="25" Width="25" Source="{Binding WeatherIconUrl}" VerticalAlignment="Center"></Image>
                     </StackPanel>
-                </Grid>
-            </StackPanel>
-        </materialDesign:Card>
+
+                    <Separator Style="{StaticResource MaterialDesignLightSeparator}"/>
+                    <Grid>
+                        <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
+                        </StackPanel>
+                    </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <ListView ItemsSource="{Binding Forecasts}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal"></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ForecastModel}">
+                        <materialDesign:Card Background="{DynamicResource PrimaryHueLightBrush}" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:ForecastModel}"
+                                 Foreground="{DynamicResource PrimaryHueLightForegroundBrush}"
+                                 Width="200"
+                                 Padding="8">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding ForecastDate, FallbackValue='N/A', Converter={StaticResource dateToWeekDayNameConverter}}"></TextBlock>
+                                <Grid>
+                                    <StackPanel Margin="8 0 8 8" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock VerticalAlignment="Center" Style="{StaticResource MaterialDesignCaptionTextBlock}" Text="{Binding WeatherDescription, FallbackValue=Description}"></TextBlock>
+                                        <Image Height="25" Width="25" Source="{Binding WeatherIconUrl}" VerticalAlignment="Center"></Image>
+                                        <TextBlock FontSize="20" VerticalAlignment="Center" Text="{Binding Temperature, FallbackValue='0'}"></TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </DockPanel>
+
     </Grid>
 </UserControl>

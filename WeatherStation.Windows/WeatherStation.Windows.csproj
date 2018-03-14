@@ -105,12 +105,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanToVisConverter.cs" />
+    <Compile Include="Converters\DateTimeConverters.cs" />
     <Compile Include="Services\AkavacheConfigurationService.cs" />
     <Compile Include="Services\GoogleGeocoderService.cs" />
     <Compile Include="Services\HardcodedAddressService.cs" />
     <Compile Include="ViewModels\AppBootstrapper.cs" />
     <Compile Include="ViewModels\ForecastViewModel.cs" />
     <Compile Include="ViewModels\SelectLocationViewModel.cs" />
+    <Compile Include="ViewModels\ForecastModel.cs" />
+    <Compile Include="ViewModels\TodaysForecastModel.cs" />
     <Compile Include="Views\ForecastView.xaml.cs">
       <DependentUpon>ForecastView.xaml</DependentUpon>
     </Compile>

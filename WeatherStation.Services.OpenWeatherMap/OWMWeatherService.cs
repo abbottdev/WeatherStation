@@ -9,6 +9,7 @@ using WeatherStation.Core.Services;
 using WeatherStation.Core.Forecasts;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Linq;
 
 namespace WeatherStation.Services.OpenWeatherMap
 {
@@ -21,7 +22,7 @@ namespace WeatherStation.Services.OpenWeatherMap
 
         }
 
-        public async Task<Forecast> GetTodaysWeatherAsync(Location location)
+        public async Task<TodaysForecast> GetTodaysWeatherAsync(Location location)
         {
             HttpClient client = new HttpClient();
 
@@ -38,13 +39,19 @@ namespace WeatherStation.Services.OpenWeatherMap
             {
                 JObject json = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                return new Forecast(
+                return new TodaysForecast(
                     location,
                     json["main"].Value<double>("temp"),
                     json["weather"].First.Value<string>("main"),
                     $"http://openweathermap.org/img/w/{ json["weather"].First.Value<string>("icon")}.png",
                     (WeatherCodes)json["weather"].First.Value<int>("id"),
-                    DateTime.Today);
+                    DateTime.Today,
+                    json["main"].Value<int>("humidity"),
+                    json["main"].Value<int>("pressure"),
+                    json["wind"].Value<int>("speed"),
+                    json["sys"].Value<long>("sunrise").ToDateTimeFromUnixEpoch(),
+                    json["sys"].Value<long>("sunset").ToDateTimeFromUnixEpoch()
+                );
             }
             catch (Exception e)
             {
@@ -100,9 +107,70 @@ namespace WeatherStation.Services.OpenWeatherMap
 
         }
 
-        public Task<IEnumerable<Forecast>> GetWeatherForecastAsync(Location location)
+        public async Task<IEnumerable<Forecast>> GetWeatherForecastAsync(Location location)
         {
-            throw new NotImplementedException();
+            HttpClient client = new HttpClient();
+            List<Forecast> forecasts = new List<Forecast>();
+
+            client.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
+
+            client.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
+
+            var response = await client.GetAsync($"forecast?lat={location.Latitude}&lon={location.Longitude}&appid={apiKey}");
+
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            try
+            {
+                JObject json = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                foreach (var item in json["list"])
+                {
+                    forecasts.Add(
+                        new Forecast(
+                            location,
+                            item["main"].Value<double>("temp"),
+                            item["weather"].First.Value<string>("main"),
+                             $"http://openweathermap.org/img/w/{ item["weather"].First.Value<string>("icon")}.png",
+                             (WeatherCodes)item["weather"].First.Value<int>("id"),
+                             item.Value<long>("dt").ToDateTimeFromUnixEpoch()));
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.Message);
+                throw;
+            }
+             
+
+            return AverageForecastsIntoDailyWindows(forecasts); 
+        }
+
+        private IEnumerable<Forecast> AverageForecastsIntoDailyWindows(List<Forecast> forecasts)
+        {
+            var groups = forecasts.GroupBy(f => f.ForecastDate.Date);
+
+            return groups.Select(grp => CalculateDailyForecast(grp));
+        }
+
+        private Forecast CalculateDailyForecast(IGrouping<DateTime, Forecast> grp)
+        {
+            double temperature = 0;
+            string description = null;
+            string icon = null;
+            WeatherCodes code = default(WeatherCodes);
+            DateTime forecastDate = default(DateTime);
+            
+            temperature = grp.Average(g => g.Temperature);
+            description = grp.First().WeatherDescription;
+            icon = grp.First().WeatherIconUrl;
+            code = grp.First().WeatherCode;
+            forecastDate = grp.Key.Date;
+
+            var forecast = new Forecast(grp.First().Location, temperature, description, icon, code, forecastDate);
+
+            return forecast;
         }
     }
 }

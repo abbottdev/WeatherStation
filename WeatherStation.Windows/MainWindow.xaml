@@ -15,7 +15,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         x:Name="theWindow" DataContext="{Binding ElementName=theWindow, Path=AppViewModel}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="400" Width="600">
 
     <materialDesign:DialogHost Identifier="RootDialog" >
         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"><!--IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">-->

@@ -15,7 +15,7 @@ namespace WeatherStation.Core.Services
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        Task<Forecast> GetTodaysWeatherAsync(Location location);
+        Task<TodaysForecast> GetTodaysWeatherAsync(Location location);
 
         /// <summary>
         /// Returns the weather forecast

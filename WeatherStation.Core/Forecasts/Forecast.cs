@@ -74,15 +74,16 @@ namespace WeatherStation.Core.Forecasts
         hurricane_other = 962,
     }
 
+
     public class Forecast
     {
-        
+
         public Locations.Location Location { get; }
 
         public double Temperature { get; }
 
         public DateTime ForecastDate { get; }
-        
+
         public string WeatherDescription { get; }
 
         public WeatherCodes WeatherCode { get; }

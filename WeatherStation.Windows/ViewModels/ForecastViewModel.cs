@@ -15,21 +15,35 @@ namespace WeatherStation.Windows.ViewModels
     public class ForecastViewModel : ReactiveObject, IRoutableViewModel
     {
         private Core.Locations.Location location;
-        private string temperature;
         private IWeatherService service;
-        private ReactiveCommand<Unit, Forecast> refreshWeatherCommand;
-        private DateTime forecastDate;
+        private ReactiveCommand<Unit, TodaysForecast> refreshTodaysWeather;
+        private ReactiveCommand<Unit, IEnumerable<ForecastModel>> loadForecast;
+        private ObservableAsPropertyHelper<IEnumerable<ForecastModel>> forecasts;
+        private TodaysForecastModel today;
         private ObservableAsPropertyHelper<bool> isBusy;
-        private string weatherDescription;
-        private string weatherIconUrl;
 
         public ReactiveCommand RefreshWeather
         {
             get
             {
-                return this.refreshWeatherCommand;
+                return this.refreshTodaysWeather;
             }
         }
+        
+        public TodaysForecastModel Today
+        {
+            get { return today; }
+            set { this.RaiseAndSetIfChanged(ref this.today, value); }
+        }
+
+        public IEnumerable<ForecastModel> Forecasts
+        {
+            get
+            {
+                return this.forecasts.Value;
+            }
+        }
+
 
         public string LocationName
         {
@@ -39,32 +53,8 @@ namespace WeatherStation.Windows.ViewModels
             }
         }
 
-        public string Temperature
-        {
-            get { return temperature; }
-            set { this.RaiseAndSetIfChanged(ref this.temperature, value); }
-        }
 
-        public DateTime ForecastDate
-        {
-            get { return forecastDate; }
-            set { this.RaiseAndSetIfChanged(ref this.forecastDate, value); }
-        }
-
-        public string WeatherDescription
-        {
-            get { return weatherDescription; }
-            set { this.RaiseAndSetIfChanged(ref this.weatherDescription, value); }
-        }
-
-        public string WeatherIconUrl
-        {
-            get { return weatherIconUrl; }
-            set { this.RaiseAndSetIfChanged(ref this.weatherIconUrl, value); }
-        }
-
-
-        public string UrlPathSegment => "forecasts/" + forecastDate.ToString();
+        public string UrlPathSegment => "forecast/";
         public bool IsBusy => this.isBusy.Value;
 
         public IScreen HostScreen { get; }
@@ -75,34 +65,32 @@ namespace WeatherStation.Windows.ViewModels
             this.service = service;
             this.location = location;
 
-            this.refreshWeatherCommand = ReactiveCommand.CreateFromTask(async () => await service.GetTodaysWeatherAsync(location));
-            this.refreshWeatherCommand.Subscribe(forecast => this.UpdateFromForecast(forecast));
+            this.refreshTodaysWeather = ReactiveCommand.CreateFromTask(async () => await service.GetTodaysWeatherAsync(location));
 
-            this.refreshWeatherCommand.IsExecuting.ToProperty(this, vm => vm.IsBusy, out this.isBusy);
+            this.loadForecast = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var forecasts = await service.GetWeatherForecastAsync(location);
+
+                return forecasts.Select(f => new ForecastModel(f));
+            });
+
+            this.refreshTodaysWeather.Subscribe(weather => this.Today = new TodaysForecastModel(weather));
+            this.forecasts = this.loadForecast.ToProperty(this, vm => vm.Forecasts);
+            
+            Observable
+                .CombineLatest(this.refreshTodaysWeather.IsExecuting, this.loadForecast.IsExecuting, (today, forecast) => today || forecast)
+                .ToProperty(this, vm => vm.IsBusy, out this.isBusy);
 
             this.WhenNavigatedTo(() => Task.Run(async () =>
             {
-                await this.refreshWeatherCommand.Execute();
+                await this.refreshTodaysWeather.Execute();
+                await this.loadForecast.Execute();
             }));
         }
 
-        public ForecastViewModel(IScreen screen, Forecast forecast, Core.Locations.Location location, IWeatherService service) : this(screen, location, service)
+        public ForecastViewModel(IScreen screen, TodaysForecast forecast, Core.Locations.Location location, IWeatherService service) : this(screen, location, service)
         {
-            UpdateFromForecast(forecast);
-        }
-
-        private void UpdateFromForecast(Forecast forecast)
-        {
-            bool isMetric = RegionInfo.CurrentRegion.IsMetric;
-
-            //Convert to either Celcius or Fahrenheit based on regional settings.
-            double regionalTemperature = (isMetric) ? forecast.Temperature - 273.15 : forecast.Temperature - 9 / 5 - 459.67;
-
-            this.Temperature = $"{regionalTemperature:F2} " + ((isMetric) ? "°C" : "°F");
-
-            this.ForecastDate = forecast.ForecastDate;
-            this.WeatherDescription = forecast.WeatherDescription;
-            this.WeatherIconUrl = forecast.WeatherIconUrl;
+            Today = new TodaysForecastModel(forecast);
         }
 
     }
