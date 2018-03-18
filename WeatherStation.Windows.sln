@@ -5,9 +5,11 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.Windows", "WeatherStation.Windows\WeatherStation.Windows.csproj", "{62EC5F54-80FF-40B0-AF78-7B26C0BC4C8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.Core", "WeatherStation.Core\WeatherStation.Core.csproj", "{0CE2FF22-D24A-4E7D-8BC7-ECC21608A773}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherStation.Core", "WeatherStation.Core\WeatherStation.Core.csproj", "{0CE2FF22-D24A-4E7D-8BC7-ECC21608A773}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.Services.OpenWeatherMap", "WeatherStation.Services.OpenWeatherMap\WeatherStation.Services.OpenWeatherMap.csproj", "{FE898A48-2926-40C4-972B-096A8C473A92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherStation.Services.OpenWeatherMap", "WeatherStation.Services.OpenWeatherMap\WeatherStation.Services.OpenWeatherMap.csproj", "{FE898A48-2926-40C4-972B-096A8C473A92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.HealthPortal", "WeatherStation.HealthPortal\WeatherStation.HealthPortal.csproj", "{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{FE898A48-2926-40C4-972B-096A8C473A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE898A48-2926-40C4-972B-096A8C473A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE898A48-2926-40C4-972B-096A8C473A92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
