@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="WeatherStation.Windows.Views.DetailedForecastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                          xmlns:vm="clr-namespace:WeatherStation.Windows.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dn="clr-namespace:WeatherStation.Windows.Designer"
+             xmlns:local="clr-namespace:WeatherStation.Windows.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True,Type=dn:DetailedForecastViewModelDesigner}">
+    <StackPanel>
+        <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}" Text="{Binding Date, StringFormat=D}"></TextBlock>
+
+       
+        <materialDesign:Card Padding="8" Margin="5">
+            <StackPanel>
+                <TextBlock Text="HOURLY SUMMARY" Style="{StaticResource MaterialDesignBody2TextBlock}"></TextBlock>
+            <ListView ItemsSource="{Binding HourlyForecast}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" IsItemsHost="True"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Margin" Value="3"></Setter>
+                        <Setter Property="Width" Value="60"></Setter>
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:DayForecastModel}">
+                        <StackPanel>
+                                <TextBlock HorizontalAlignment="Center" Margin="0 10" Style="{StaticResource MaterialDesignBody2TextBlock}" Text="{Binding ForecastDate, StringFormat=t}"></TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Margin="0 5" Style="{StaticResource MaterialDesignBody2TextBlock}"  Text="{Binding Temperature}"></TextBlock>
+                            <!--<TextBlock HorizontalAlignment="Center" Text="{Binding WeatherIconUrl}"></TextBlock>-->
+                            <materialDesign:PackIcon HorizontalAlignment="Center" Width="35" Height="35" Margin="5" Kind="{Binding WeatherCode, Converter={StaticResource packIconConverter}}" VerticalAlignment="Center"></materialDesign:PackIcon>
+                            <TextBlock HorizontalAlignment="Center" FontSize="8" Text="{Binding WeatherDescription}"></TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </materialDesign:Card>
+    </StackPanel>
+</UserControl>

@@ -47,7 +47,7 @@ namespace WeatherStation.Windows.ViewModels
                     this
                      .Router
                      .NavigateAndReset
-                     .Execute(new ForecastViewModel(this, storedLocation, Locator.Current.GetService<IWeatherService>()))
+                     .Execute(new WeatherStationViewModel(this, storedLocation, Locator.Current.GetService<IWeatherService>()))
                      .Subscribe();
                 }
                 else
@@ -71,8 +71,9 @@ namespace WeatherStation.Windows.ViewModels
             //Todo: register views.
             //Locator.CurrentMutable.Register(() => new UpcomingMoviesListView(), typeof(IViewFor<UpcomingMoviesListViewModel>));
             //Locator.CurrentMutable.Register(() => new UpcomingMoviesCellView(), typeof(IViewFor<UpcomingMoviesCellViewModel>));
-            Locator.CurrentMutable.Register(() => new ForecastView(), typeof(IViewFor<ForecastViewModel>));
+            Locator.CurrentMutable.Register(() => new WeatherStationView(), typeof(IViewFor<WeatherStationViewModel>));
             Locator.CurrentMutable.Register(() => new SelectLocationView(), typeof(IViewFor<SelectLocationViewModel>));
+            Locator.CurrentMutable.Register(() => new DetailedForecastView(), typeof(IViewFor<DetailedForecastViewModel>));
 
             Locator.CurrentMutable.Register(() => new AkavacheConfigurationService(), typeof(IConfigurationService));
             Locator.CurrentMutable.Register(() => new OWMWeatherService(), typeof(IWeatherService));

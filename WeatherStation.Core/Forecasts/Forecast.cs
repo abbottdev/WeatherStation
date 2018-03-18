@@ -77,7 +77,6 @@ namespace WeatherStation.Core.Forecasts
 
     public class Forecast
     {
-
         public Locations.Location Location { get; }
 
         public double Temperature { get; }

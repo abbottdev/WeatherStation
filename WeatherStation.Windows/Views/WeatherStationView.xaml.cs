@@ -20,24 +20,24 @@ namespace WeatherStation.Windows.Views
     /// <summary>
     /// Interaction logic for ForecastView.xaml
     /// </summary>
-    public partial class ForecastView : UserControl, IViewFor<ForecastViewModel>
+    public partial class WeatherStationView : UserControl, IViewFor<WeatherStationViewModel>
     {
 
-        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register("ViewModel", typeof(ForecastViewModel), typeof(ForecastView), new PropertyMetadata(default(ForecastViewModel)));
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register("ViewModel", typeof(WeatherStationViewModel), typeof(WeatherStationView), new PropertyMetadata(default(WeatherStationViewModel)));
 
-        public ForecastViewModel ViewModel
+        public WeatherStationViewModel ViewModel
         {
-            get { return (ForecastViewModel)GetValue(ViewModelProperty); }
+            get { return (WeatherStationViewModel)GetValue(ViewModelProperty); }
             set { SetValue(ViewModelProperty, value); }
         }
 
         object IViewFor.ViewModel
         {
             get { return ViewModel; }
-            set { ViewModel = (ForecastViewModel)value; }
+            set { ViewModel = (WeatherStationViewModel)value; }
         }
 
-        public ForecastView()
+        public WeatherStationView()
         {
             InitializeComponent();
 

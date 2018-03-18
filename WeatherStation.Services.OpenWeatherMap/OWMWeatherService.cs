@@ -10,6 +10,9 @@ using WeatherStation.Core.Forecasts;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Linq;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearRegression;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace WeatherStation.Services.OpenWeatherMap
 {
@@ -20,6 +23,90 @@ namespace WeatherStation.Services.OpenWeatherMap
         public OWMWeatherService()
         {
 
+        }
+
+        public async Task<IEnumerable<Forecast>> GetHourlyWeatherForDateAsync(Location location, DateTime start, TimeSpan duration)
+        {
+            if (duration.TotalHours > 24) throw new ArgumentOutOfRangeException(nameof(duration), "The maximum duration is 24 hours for a date");
+            if ((start - DateTime.Now).TotalDays >= 5) throw new ArgumentOutOfRangeException("The maximum value for the hourly forecast cannot be larger than 4 days");
+            if (start < DateTime.Today) throw new ArgumentException("The date must be in the future.", nameof(start));
+
+            int skip = 0;
+            int take = 8;
+            int count = 0;
+
+            //The API only supports 3 hourly data so we need to calculate an average across those values
+            //As it's split into 3 hours, a day will consist of 8 segments of data so we will filter the 
+            //API result set based on what we need.
+
+            skip = (int)Math.Ceiling((start - DateTime.Now).TotalHours / 3);
+            take = (int)Math.Ceiling(duration.TotalHours / 3);
+            count = skip + take;
+
+            HttpClient client = new HttpClient();
+            List<Forecast> forecasts = new List<Forecast>();
+            List<Forecast> results = new List<Forecast>();
+
+            client.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
+
+            client.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
+
+            var response = await client.GetAsync($"forecast?cnt={count}&lat={location.Latitude}&lon={location.Longitude}&appid={apiKey}");
+
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                JObject json = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                foreach (var item in json["list"].Skip(skip).Take(take))
+                {
+                    forecasts.Add(
+                        new Forecast(
+                            location,
+                            item["main"].Value<double>("temp"),
+                            item["weather"].First.Value<string>("main"),
+                             $"http://openweathermap.org/img/w/{ item["weather"].First.Value<string>("icon")}.png",
+                             (WeatherCodes)item["weather"].First.Value<int>("id"),
+                             item.Value<long>("dt").ToDateTimeFromUnixEpoch()));
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.Message);
+                throw;
+            }
+
+            //Use Linear regression to create a fit line to plot the temperatures every hour as we 
+            //only have data points every 3 hours.
+            var inputHoursAsEpochs = forecasts.Select(f => f.ForecastDate.ToUnixEpoch()).ToArray();
+            var inputTemperatures = forecasts.Select(f => f.Temperature).ToArray();
+
+            //Luckily as a list the items are currently guaranteed to be in the same order 
+            //X will be time, Y will be temp.
+            //  Func<double, double> fitter = Fit.LinearCombinationFunc(inputHoursAsEpochs, inputTemperatures,  DirectRegressionMethod.QR);
+
+            Func<double, double> fitter = MathNet.Numerics.Fit.LineFunc(inputHoursAsEpochs, inputTemperatures);
+
+            for (int hourOffset = 0; hourOffset <= duration.TotalHours; hourOffset++)
+            {
+                //How do we determine the weather, for now, we will get the closest weather to today.
+                var closestForecast = forecasts.Where(f => f.ForecastDate >= start.AddHours(hourOffset)).First();
+
+                Forecast forecast = new Forecast(
+                    location,
+                    fitter(start.AddHours(hourOffset).ToUnixEpoch()),
+                    closestForecast.WeatherDescription,
+                    closestForecast.WeatherIconUrl,
+                    closestForecast.WeatherCode,
+                    start.AddHours(hourOffset));
+
+                results.Add(forecast);
+            }
+
+            return results;
         }
 
         public async Task<TodaysForecast> GetTodaysWeatherAsync(Location location)
@@ -142,14 +229,14 @@ namespace WeatherStation.Services.OpenWeatherMap
                 Trace.WriteLine(e.Message);
                 throw;
             }
-             
 
-            return AverageForecastsIntoDailyWindows(forecasts); 
+
+            return AverageForecastsIntoDailyWindows(forecasts);
         }
 
         private IEnumerable<Forecast> AverageForecastsIntoDailyWindows(List<Forecast> forecasts)
         {
-            var groups = forecasts.GroupBy(f => f.ForecastDate.Date);
+            var groups = forecasts.GroupBy(f => f.ForecastDate.Date).Where(grp => grp.Key != DateTime.Today);
 
             return groups.Select(grp => CalculateDailyForecast(grp));
         }
@@ -161,7 +248,7 @@ namespace WeatherStation.Services.OpenWeatherMap
             string icon = null;
             WeatherCodes code = default(WeatherCodes);
             DateTime forecastDate = default(DateTime);
-            
+
             temperature = grp.Average(g => g.Temperature);
             description = grp.First().WeatherDescription;
             icon = grp.First().WeatherIconUrl;

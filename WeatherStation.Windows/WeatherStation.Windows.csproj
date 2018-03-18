@@ -48,6 +48,9 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.4.0.1044, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.4.0.1044\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.4.0\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -71,6 +74,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -86,6 +90,7 @@
     <Reference Include="System.Reactive.Windows.Threading, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -106,16 +111,23 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanToVisConverter.cs" />
     <Compile Include="Converters\DateTimeConverters.cs" />
+    <Compile Include="Converters\PackIconConverter.cs" />
+    <Compile Include="Designer\DetailedForecastViewModelDesigner.cs" />
+    <Compile Include="Designer\WeatherStationDesigner.cs" />
     <Compile Include="Services\AkavacheConfigurationService.cs" />
     <Compile Include="Services\GoogleGeocoderService.cs" />
     <Compile Include="Services\HardcodedAddressService.cs" />
     <Compile Include="ViewModels\AppBootstrapper.cs" />
-    <Compile Include="ViewModels\ForecastViewModel.cs" />
+    <Compile Include="ViewModels\DetailedForecastViewModel.cs" />
+    <Compile Include="ViewModels\WeatherStationViewModel.cs" />
     <Compile Include="ViewModels\SelectLocationViewModel.cs" />
-    <Compile Include="ViewModels\ForecastModel.cs" />
+    <Compile Include="ViewModels\DayForecastModel.cs" />
     <Compile Include="ViewModels\TodaysForecastModel.cs" />
-    <Compile Include="Views\ForecastView.xaml.cs">
-      <DependentUpon>ForecastView.xaml</DependentUpon>
+    <Compile Include="Views\DetailedForecastView.xaml.cs">
+      <DependentUpon>DetailedForecastView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WeatherStationView.xaml.cs">
+      <DependentUpon>WeatherStationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectLocationView.xaml.cs">
       <DependentUpon>SelectLocationView.xaml</DependentUpon>
@@ -132,7 +144,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ForecastView.xaml">
+    <Page Include="Views\DetailedForecastView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WeatherStationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

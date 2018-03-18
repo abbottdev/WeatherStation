@@ -15,10 +15,11 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         x:Name="theWindow" DataContext="{Binding ElementName=theWindow, Path=AppViewModel}"
-        Title="MainWindow" Height="400" Width="600">
+        Title="Weather Station" Height="400" Width="600">
 
     <materialDesign:DialogHost Identifier="RootDialog" >
-        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"><!--IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">-->
+        <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+            <!--IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">-->
             <materialDesign:DrawerHost.LeftDrawerContent>
                 <DockPanel MinWidth="212">
                     <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" 
@@ -26,6 +27,9 @@
                                     HorizontalAlignment="Right" Margin="16"
                                     IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
                     <StackPanel>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp" Command="{Binding LoadCommand}">
+                            HOME
+                        </Button>
                         <Button Style="{StaticResource MaterialDesignFlatButton}" PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp" Command="{Binding ResetSettings}">
                             CHANGE LOCATION
                         </Button>
@@ -37,9 +41,13 @@
                 <materialDesign:ColorZone Mode="PrimaryDark" Padding="12" CornerRadius="3" materialDesign:ShadowAssist.ShadowDepth="Depth3" Margin="2,2,2,10" DockPanel.Dock="Top">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False" x:Name="MenuToggleButton"/>
+                            <Button Style="{StaticResource MaterialDesignToolForegroundButton}" x:Name="BackButton" Command="{Binding Router.NavigateBack}">
+                                <materialDesign:PackIcon Kind="ArrowLeft"></materialDesign:PackIcon>
+                            </Button>
                             <TextBlock VerticalAlignment="Center" Margin="16 0 0 0">Weather Station</TextBlock>
                         </StackPanel>
+
+                        <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False" x:Name="MenuToggleButton" HorizontalAlignment="Right"/>
                     </Grid>
                 </materialDesign:ColorZone>
 

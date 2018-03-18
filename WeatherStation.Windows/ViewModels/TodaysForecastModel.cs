@@ -2,13 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using WeatherStation.Core.Forecasts;
+using WeatherStation.Core.Services;
 
 namespace WeatherStation.Windows.ViewModels
 {
-    public class TodaysForecastModel : ForecastModel
+    public class TodaysForecastModel : DayForecastModel
     {
 
         private int humidityPercent;
@@ -50,7 +52,7 @@ namespace WeatherStation.Windows.ViewModels
 
 
 
-        public TodaysForecastModel(TodaysForecast weather) : base(weather)
+        public TodaysForecastModel(TodaysForecast weather, AppViewModel app, IWeatherService service) : base(weather, app, service)
         {
             this.Humidity = weather.Humidity;
             this.Pressure = weather.Pressure;
@@ -58,6 +60,7 @@ namespace WeatherStation.Windows.ViewModels
             this.Sunset = weather.Sunset;
             this.WindSpeed = weather.WindSpeed;
             //wiunnd.speed
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿<Application x:Class="WeatherStation.Windows.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:WeatherStation.Windows"
              xmlns:converters="clr-namespace:WeatherStation.Windows.Converters"
              StartupUri="MainWindow.xaml">
@@ -15,7 +16,7 @@
 
             <converters:BooleanToVisConverter x:Key="boolToVis"></converters:BooleanToVisConverter>
             <converters:DateToWeeknameConverter x:Key="dateToWeekDayNameConverter"></converters:DateToWeeknameConverter>
-            
+            <converters:PackIconConverter x:Key="packIconConverter"></converters:PackIconConverter>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
