@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherStation.Services.Ope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.HealthPortal", "WeatherStation.HealthPortal\WeatherStation.HealthPortal.csproj", "{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthPortal", "HealthPortal", "{3929CD61-E455-4311-A654-88641BFCFF70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{2DDEBEDA-A0A4-4A99-B68F-0BF7EE604679}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{62EC5F54-80FF-40B0-AF78-7B26C0BC4C8B} = {2DDEBEDA-A0A4-4A99-B68F-0BF7EE604679}
+		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B} = {3929CD61-E455-4311-A654-88641BFCFF70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDB9FE71-1456-4C8D-8F11-7CA52D3F56D5}

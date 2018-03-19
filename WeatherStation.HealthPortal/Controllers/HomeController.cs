@@ -9,11 +9,13 @@ namespace WeatherStation.HealthPortal.Controllers
 {
     public class HomeController : Controller
     {
+        static HomeController()
+        {
+        }
 
         public async Task<ActionResult> Index()
         {
-            await Services.GremlinService.CreateConditionGraphAsync();
-
+            
             return View();
         }
     }

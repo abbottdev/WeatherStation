@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WeatherStation.HealthPortal.Models
 {
-    public class WeatherSymptom
+    public class Weather
     {
     }
 }
