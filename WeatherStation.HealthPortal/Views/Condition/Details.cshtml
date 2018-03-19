@@ -1,0 +1,47 @@
+﻿@model WeatherStation.HealthPortal.Models.Conditions.ConditionDetails
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Condition Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ConditionName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ConditionName)
+        </dd>
+
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Symptoms)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var symptom in Model.Symptoms)
+                {
+                    <li>@Html.ActionLink(symptom.Name, "Details", new { conditionId = symptom.Id })</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            Complicates:
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var wb in Model.Complications)
+                {
+                    <li>@wb</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+</div>

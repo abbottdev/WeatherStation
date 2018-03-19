@@ -237,11 +237,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Condition.cs" />
+    <Compile Include="Models\Conditions\Condition.cs" />
+    <Compile Include="Models\Conditions\ConditionDetails.cs" />
+    <Compile Include="Models\Conditions\WorsenedByWeatherModel.cs" />
     <Compile Include="Models\PhysiologicalSymptom.cs" />
     <Compile Include="Models\Symptom.cs" />
     <Compile Include="Models\Weather.cs" />
-    <Compile Include="Models\WorsenedCondition.cs" />
+    <Compile Include="Models\Conditions\WorsenedCondition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\GremlinService.cs" />
   </ItemGroup>
@@ -280,6 +282,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="Properties\PublishProfiles\WeatherStationHealthPortal20180319111551 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -326,6 +329,9 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Condition\ConditionsAffectedByWeather.cshtml" />
+    <Content Include="Views\Condition\Edit.cshtml" />
+    <Content Include="Views\Condition\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -362,7 +368,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63625</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

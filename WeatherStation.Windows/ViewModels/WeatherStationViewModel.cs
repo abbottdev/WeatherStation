@@ -11,6 +11,7 @@ using System.Reactive;
 using System.Globalization;
 using System.ComponentModel;
 using System.Windows;
+using WeatherStation.Core.Health;
 
 namespace WeatherStation.Windows.ViewModels
 {
@@ -18,58 +19,67 @@ namespace WeatherStation.Windows.ViewModels
     {
         private ObservableAsPropertyHelper<IEnumerable<DayForecastModel>> forecasts;
         private ObservableAsPropertyHelper<bool> isBusy;
-        private ReactiveCommand<Unit, IEnumerable<DayForecastModel>> loadForecast;
+        private ReactiveCommand<Unit, IEnumerable<DayForecastModel>> forecastCommand;
         private Core.Locations.Location location;
         private ReactiveCommand<Unit, TodaysForecast> refreshTodaysWeather;
+        private ObservableAsPropertyHelper<TodaysForecastModel> todaysWeatherProperty;
         private IWeatherService service;
-        private TodaysForecastModel today;
+        private ObservableAsPropertyHelper<IEnumerable<ConditionViewModel>> conditionsAffectedByWeatherProperty;
 
-        public WeatherStationViewModel(AppViewModel screen, Core.Locations.Location location, IWeatherService service)
+        public WeatherStationViewModel(AppViewModel screen, Core.Locations.Location location, IWeatherService service, IHealthService healthService)
         {
             this.HostScreen = screen;
             this.service = service;
             this.location = location;
+
 #if DEBUG
             if ((bool)(DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue))
             {
-                
+
             }
             else
             {
 #endif
 
+                this.refreshTodaysWeather = ReactiveCommand.CreateFromTask(async () => await service.GetTodaysWeatherAsync(location));
+                this.todaysWeatherProperty = this.refreshTodaysWeather.Select(weather => new TodaysForecastModel(weather, screen, service)).ToProperty(this, vm => vm.Today);
 
-            this.refreshTodaysWeather = ReactiveCommand.CreateFromTask(async () => await service.GetTodaysWeatherAsync(location));
+                this.forecastCommand = ReactiveCommand.CreateFromTask(async () =>
+                {
+                    var forecasts = await service.GetWeatherForecastAsync(location);
 
-            this.loadForecast = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var forecasts = await service.GetWeatherForecastAsync(location);
+                    return forecasts.Select(f => new DayForecastModel(f, screen, service));
+                });
 
-                return forecasts.Select(f => new DayForecastModel(f, screen, service));
-            });
+                this.forecasts = this.forecastCommand.ToProperty(this, vm => vm.Forecasts);
 
-            this.refreshTodaysWeather.Subscribe(weather => this.Today = new TodaysForecastModel(weather, screen, service));
-            this.forecasts = this.loadForecast.ToProperty(this, vm => vm.Forecasts);
+                var refreshConditionsAffectedByWeatherCommand = ReactiveCommand.CreateFromTask(async (TodaysForecast weather) =>
+                {
+                    var conditions = await healthService.GetConditionsAffectedByWeatherAsync(weather.WeatherCode, weather.Temperature);
 
-            Observable
-                .CombineLatest(this.refreshTodaysWeather.IsExecuting, this.loadForecast.IsExecuting, (today, forecast) => today || forecast)
-                .ToProperty(this, vm => vm.IsBusy, out this.isBusy);
+                    return conditions.Select(c => new ConditionViewModel(screen, c.Id, c.Name, healthService));
+                });
 
-            this.WhenNavigatedTo(() => Task.Run(async () =>
-            {
-                await this.refreshTodaysWeather.Execute();
-                await this.loadForecast.Execute();
-            }));
+                this.conditionsAffectedByWeatherProperty = refreshConditionsAffectedByWeatherCommand.ToProperty(this, vm => vm.ConditionsAffectedByWeather);
+
+                this.refreshTodaysWeather.InvokeCommand(refreshConditionsAffectedByWeatherCommand);
+
+                //Create a busy property to show the user we're busy doing something.
+                Observable
+                    .CombineLatest(this.refreshTodaysWeather.IsExecuting, this.forecastCommand.IsExecuting, refreshConditionsAffectedByWeatherCommand.IsExecuting, (today, forecast, conditions) => today || forecast || conditions)
+                    .ToProperty(this, vm => vm.IsBusy, out this.isBusy);
+                
+                this.WhenNavigatedTo(() => Task.Run(async () =>
+                {
+                    await this.refreshTodaysWeather.Execute();
+                    await this.forecastCommand.Execute();
+                }));
 
 #if DEBUG
             }
 #endif
         }
 
-        public WeatherStationViewModel(AppViewModel screen, TodaysForecast forecast, Core.Locations.Location location, IWeatherService service) : this(screen, location, service)
-        {
-            Today = new TodaysForecastModel(forecast, screen, service);
-        }
 
         public virtual IEnumerable<DayForecastModel> Forecasts
         {
@@ -78,10 +88,6 @@ namespace WeatherStation.Windows.ViewModels
                 return this.forecasts.Value;
             }
         }
-
-        public IScreen HostScreen { get; }
-
-        public bool IsBusy => this.isBusy.Value;
 
         public string LocationName
         {
@@ -98,12 +104,19 @@ namespace WeatherStation.Windows.ViewModels
                 return this.refreshTodaysWeather;
             }
         }
-        
-        public TodaysForecastModel Today
+
+        public virtual TodaysForecastModel Today
         {
-            get { return today; }
-            set { this.RaiseAndSetIfChanged(ref this.today, value); }
+            get { return todaysWeatherProperty.Value; }
         }
+
+        public IEnumerable<ConditionViewModel> ConditionsAffectedByWeather => this.conditionsAffectedByWeatherProperty.Value;
+
+        public bool IsBusy => this.isBusy.Value;
+
+        public IScreen HostScreen { get; }
+
         public string UrlPathSegment => "forecast/";
+
     }
 }

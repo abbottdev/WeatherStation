@@ -118,11 +118,15 @@
     <Compile Include="Services\GoogleGeocoderService.cs" />
     <Compile Include="Services\HardcodedAddressService.cs" />
     <Compile Include="ViewModels\AppBootstrapper.cs" />
+    <Compile Include="ViewModels\ConditionViewModel.cs" />
     <Compile Include="ViewModels\DetailedForecastViewModel.cs" />
     <Compile Include="ViewModels\WeatherStationViewModel.cs" />
     <Compile Include="ViewModels\SelectLocationViewModel.cs" />
     <Compile Include="ViewModels\DayForecastModel.cs" />
     <Compile Include="ViewModels\TodaysForecastModel.cs" />
+    <Compile Include="Views\ConditionView.xaml.cs">
+      <DependentUpon>ConditionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DetailedForecastView.xaml.cs">
       <DependentUpon>DetailedForecastView.xaml</DependentUpon>
     </Compile>
@@ -144,6 +148,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ConditionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DetailedForecastView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +196,10 @@
     <ProjectReference Include="..\WeatherStation.Core\WeatherStation.Core.csproj">
       <Project>{0ce2ff22-d24a-4e7d-8bc7-ecc21608a773}</Project>
       <Name>WeatherStation.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeatherStation.Services.Health\WeatherStation.Services.Health.csproj">
+      <Project>{000f9ccb-49fe-40de-bddb-37dc448b0dc8}</Project>
+      <Name>WeatherStation.Services.Health</Name>
     </ProjectReference>
     <ProjectReference Include="..\WeatherStation.Services.OpenWeatherMap\WeatherStation.Services.OpenWeatherMap.csproj">
       <Project>{fe898a48-2926-40c4-972b-096a8c473a92}</Project>

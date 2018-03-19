@@ -1,0 +1,41 @@
+﻿@model  WeatherStation.HealthPortal.Models.Conditions.ComplicatedByWeatherModel
+
+@{
+    ViewBag.Title = "Conditions Affected By " + Model.Weather;
+}
+
+<h2>Conditions complicated by @Model.Weather</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Condition
+        </th>
+        <th>
+            Suggestions
+        </th>
+    </tr>
+
+    @foreach (var item in Model.Complications)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Condition)
+            </td>
+            <td>
+                <span style="white-space: pre-line">@string.Join(Environment.NewLine, item.Suggestions)</span>
+            </td>
+        </tr>
+    }
+
+</table>

@@ -25,9 +25,13 @@ namespace WeatherStation.Windows.Designer
         {
             return new TodaysForecast(WeatherStationDesigner.Location, temperature, "Sunny", "", WeatherCodes.clear_sky, DateTime.Today, 3, 1080, 10, DateTime.Today.AddHours(6), DateTime.Today.AddHours(18));
         }
-        public WeatherStationDesigner() : base(null, GetTodaysForecast(), null, null)
+        public WeatherStationDesigner() : base(null, new Location(0,0,"Leeds, UK"), null, null)
         {
+
         }
+
+        public override TodaysForecastModel Today => new TodaysForecastModel(GetTodaysForecast(), null, null);
+
 
         public override IEnumerable<DayForecastModel> Forecasts => GenerateForecasts();
 

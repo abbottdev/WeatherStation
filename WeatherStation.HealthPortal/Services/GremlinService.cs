@@ -84,13 +84,13 @@ namespace WeatherStation.HealthPortal.Services
                 new Uri(endpoint),
                 authKey))
             {
-                Database database = await client.CreateDatabaseIfNotExistsAsync(new Database { Id = "conditions" });
+                Database database = await client.CreateDatabaseIfNotExistsAsync(new Database { Id = database_name });
 
-                Uri databaseUri = UriFactory.CreateDatabaseUri("conditions");
+                Uri databaseUri = UriFactory.CreateDatabaseUri(database_name);
 
                 DocumentCollection graph =
                     await client.CreateDocumentCollectionIfNotExistsAsync(
-                        databaseUri, new DocumentCollection { Id = "conditionscol" }, new RequestOptions { OfferThroughput = 400 });
+                        databaseUri, new DocumentCollection { Id = collection }, new RequestOptions { OfferThroughput = 400 });
 
                 var query = client.CreateGremlinQuery<dynamic>(graph, gremlinQueries["Cleanup"]);
 
@@ -107,6 +107,7 @@ namespace WeatherStation.HealthPortal.Services
                 await AddCommonColdAsync(client, graph);
 
                 await AddAsthmaAsync(client, graph);
+                await AddDyspneaAsync(client, graph);
 
                 await AddWorseningAffectsAsync(client, graph);
 
@@ -119,6 +120,26 @@ namespace WeatherStation.HealthPortal.Services
             Guid asthma = Guid.NewGuid();
 
             await ExecuteGremlinQueryAsync(client, graph, "g" + CreateConditionWithGremlinQuery(asthma.ToString(), "Asthma"));
+
+        }
+        private static async Task AddDyspneaAsync(DocumentClient client, DocumentCollection graph)
+        {
+            Guid dyspnea = Guid.NewGuid();
+
+            var query = "g" + CreateConditionWithGremlinQuery(dyspnea.ToString(), "Dyspnea");
+
+            query += $".addE('complicates').to(g.V().hasLabel('condition').has('name', 'Asthma'))";
+            query += ".property('suggestions', 'Increase medication dosage|Reduce phsyical activity').outV()";
+
+            query += $".addE('symptom').to(g.V().hasLabel('condition').has('name', 'Asthma')).outV()";
+            query += $".addE('symptom').to(g.V().hasLabel('condition').has('name', 'Common Cold')).outV()";
+
+            await ExecuteGremlinQueryAsync(client, graph, query);
+
+            //Asthma is made worse by a cold
+            // command = "g.V().hasLabel('condition').has('name', 'Asthma').as('source').addE('complicates').to('source').from(g.V().hasLabel('condition').has('name', 'Common Cold'))";
+
+
 
         }
 
@@ -187,14 +208,14 @@ namespace WeatherStation.HealthPortal.Services
         private static async Task AddWorseningAffectsAsync(DocumentClient client, DocumentCollection graph)
         {
             //Colds are made worse by cold weather.
-            var command = "g.V().hasLabel('condition').has('name', 'Common Cold').as('source').addE('worsened by').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
+            var command = "g.V().hasLabel('condition').has('name', 'Common Cold').as('source').addE('complicates').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
 
             command += ".property('suggestions', 'Reduce phsyical activity')";
 
             await ExecuteGremlinQueryAsync(client, graph, command);
 
             //Runny noses make colds worse
-            command = "g.V().hasLabel('condition').has('name', 'Rhinorrhea').as('source').addE('worsened by').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
+            command = "g.V().hasLabel('condition').has('name', 'Rhinorrhea').as('source').addE('complicates').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
 
             //Suggestions to alleviate worsening.
             command += ".property('suggestions', 'Consider taking decongestants')";
@@ -202,7 +223,7 @@ namespace WeatherStation.HealthPortal.Services
             await ExecuteGremlinQueryAsync(client, graph, command);
 
             //Asthma is made worse by a cold
-            command = "g.V().hasLabel('condition').has('name', 'Asthma').as('source').addE('worsened by').to('source').from(g.V().hasLabel('condition').has('name', 'Common Cold'))";
+            command = "g.V().hasLabel('condition').has('name', 'Asthma').as('source').addE('complicates').to('source').from(g.V().hasLabel('condition').has('name', 'Common Cold'))";
 
             //Suggestions to alleviate worsening.
             command += ".property('suggestions', 'Increase dosage|Reduce phsyical activity')";
@@ -210,7 +231,7 @@ namespace WeatherStation.HealthPortal.Services
             await ExecuteGremlinQueryAsync(client, graph, command);
 
             //Asthma is made worse by the cold
-            command = "g.V().hasLabel('condition').has('name', 'Asthma').as('source').addE('worsened by').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
+            command = "g.V().hasLabel('condition').has('name', 'Asthma').as('source').addE('complicates').to('source').from(g.V().hasLabel('weather').has('name', 'cold'))";
 
             //Suggestions to alleviate worsening.
             command += ".property('suggestions', 'Increase dosage|Reduce phsyical activity')";

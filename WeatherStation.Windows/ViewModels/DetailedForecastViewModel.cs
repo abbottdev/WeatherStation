@@ -17,6 +17,7 @@ namespace WeatherStation.Windows.ViewModels
         private ObservableAsPropertyHelper<IEnumerable<DayForecastModel>> hourlyForecast;
         private ReactiveCommand<Unit, IEnumerable<DayForecastModel>> refreshForecast;
 
+
         public DetailedForecastViewModel(AppViewModel screen, Location location, DateTime date, IWeatherService service)
         {
             this.HostScreen = screen;

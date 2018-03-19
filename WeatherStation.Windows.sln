@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthPortal", "HealthPorta
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{2DDEBEDA-A0A4-4A99-B68F-0BF7EE604679}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation.Services.Health", "WeatherStation.Services.Health\WeatherStation.Services.Health.csproj", "{000F9CCB-49FE-40DE-BDDB-37DC448B0DC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1DB0055-68EA-44DB-BCD2-CAE1C1E0622B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{000F9CCB-49FE-40DE-BDDB-37DC448B0DC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{000F9CCB-49FE-40DE-BDDB-37DC448B0DC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{000F9CCB-49FE-40DE-BDDB-37DC448B0DC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{000F9CCB-49FE-40DE-BDDB-37DC448B0DC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

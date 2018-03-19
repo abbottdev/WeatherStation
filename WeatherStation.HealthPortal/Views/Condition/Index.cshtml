@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WeatherStation.HealthPortal.Models.Condition>
+﻿@model IEnumerable<WeatherStation.HealthPortal.Models.Conditions.Condition>
 
 @{
     ViewBag.Title = "Index";
@@ -19,9 +19,9 @@
         <tr>
             <td>@item.Name</td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { item.Id }) |
-                @Html.ActionLink("Details", "Details", new { item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { item.Id })
+                @Html.ActionLink("Edit", "Edit", "Condition", new { conditionId = item.Id }, new { }) |
+                @Html.ActionLink("Details", "Details", "Condition", new { conditionId = item.Id }, new { }) |
+                @Html.ActionLink("Delete", "Delete", "Condition", new { conditionId = item.Id }, new { })
             </td>
         </tr>
     }

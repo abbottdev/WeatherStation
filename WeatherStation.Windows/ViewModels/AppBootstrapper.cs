@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using WeatherStation.Core.Services;
+using WeatherStation.Services.Health;
 using WeatherStation.Services.OpenWeatherMap;
 using WeatherStation.Windows.Services;
 using WeatherStation.Windows.Views;
@@ -47,7 +48,7 @@ namespace WeatherStation.Windows.ViewModels
                     this
                      .Router
                      .NavigateAndReset
-                     .Execute(new WeatherStationViewModel(this, storedLocation, Locator.Current.GetService<IWeatherService>()))
+                     .Execute(new WeatherStationViewModel(this, storedLocation, Locator.Current.GetService<IWeatherService>(), Locator.Current.GetService<IHealthService>()))
                      .Subscribe();
                 }
                 else
@@ -67,6 +68,7 @@ namespace WeatherStation.Windows.ViewModels
         {
             Locator.CurrentMutable.RegisterConstant(this, typeof(IScreen));
 
+            string healthPortalEndpoint = "http://weatherstationhealthportal20180319111551.azurewebsites.net";
 
             //Todo: register views.
             //Locator.CurrentMutable.Register(() => new UpcomingMoviesListView(), typeof(IViewFor<UpcomingMoviesListViewModel>));
@@ -74,10 +76,12 @@ namespace WeatherStation.Windows.ViewModels
             Locator.CurrentMutable.Register(() => new WeatherStationView(), typeof(IViewFor<WeatherStationViewModel>));
             Locator.CurrentMutable.Register(() => new SelectLocationView(), typeof(IViewFor<SelectLocationViewModel>));
             Locator.CurrentMutable.Register(() => new DetailedForecastView(), typeof(IViewFor<DetailedForecastViewModel>));
+            Locator.CurrentMutable.Register(() => new ConditionView(), typeof(IViewFor<ConditionViewModel>));
 
             Locator.CurrentMutable.Register(() => new AkavacheConfigurationService(), typeof(IConfigurationService));
             Locator.CurrentMutable.Register(() => new OWMWeatherService(), typeof(IWeatherService));
             Locator.CurrentMutable.Register(() => new GoogleGeocoderService(), typeof(IGeocodeService));
+            Locator.CurrentMutable.Register(() => new HealthPortalService(healthPortalEndpoint), typeof(IHealthService));
         }
     }
 }
