@@ -93,17 +93,21 @@ namespace WeatherStation.Services.OpenWeatherMap
             for (int hourOffset = 0; hourOffset <= duration.TotalHours; hourOffset++)
             {
                 //How do we determine the weather, for now, we will get the closest weather to today.
-                var closestForecast = forecasts.Where(f => f.ForecastDate >= start.AddHours(hourOffset)).First();
+                var closestForecast = forecasts.Where(f => f.ForecastDate >= start.AddHours(hourOffset)).FirstOrDefault();
 
-                Forecast forecast = new Forecast(
-                    location,
-                    fitter(start.AddHours(hourOffset).ToUnixEpoch()),
-                    closestForecast.WeatherDescription,
-                    closestForecast.WeatherIconUrl,
-                    closestForecast.WeatherCode,
-                    start.AddHours(hourOffset));
+                if (closestForecast != null)
+                {
 
-                results.Add(forecast);
+                    Forecast forecast = new Forecast(
+                        location,
+                        fitter(start.AddHours(hourOffset).ToUnixEpoch()),
+                        closestForecast.WeatherDescription,
+                        closestForecast.WeatherIconUrl,
+                        closestForecast.WeatherCode,
+                        start.AddHours(hourOffset));
+
+                    results.Add(forecast);
+                }
             }
 
             return results;

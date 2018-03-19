@@ -112,6 +112,7 @@
     <Compile Include="Converters\BooleanToVisConverter.cs" />
     <Compile Include="Converters\DateTimeConverters.cs" />
     <Compile Include="Converters\PackIconConverter.cs" />
+    <Compile Include="Designer\ConditionDesignerViewModel.cs" />
     <Compile Include="Designer\DetailedForecastViewModelDesigner.cs" />
     <Compile Include="Designer\WeatherStationDesigner.cs" />
     <Compile Include="Services\AkavacheConfigurationService.cs" />

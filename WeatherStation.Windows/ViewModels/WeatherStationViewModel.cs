@@ -25,6 +25,7 @@ namespace WeatherStation.Windows.ViewModels
         private ObservableAsPropertyHelper<TodaysForecastModel> todaysWeatherProperty;
         private IWeatherService service;
         private ObservableAsPropertyHelper<IEnumerable<ConditionViewModel>> conditionsAffectedByWeatherProperty;
+        private ObservableAsPropertyHelper<bool> hasConditions;
 
         public WeatherStationViewModel(AppViewModel screen, Core.Locations.Location location, IWeatherService service, IHealthService healthService)
         {
@@ -68,7 +69,9 @@ namespace WeatherStation.Windows.ViewModels
                 Observable
                     .CombineLatest(this.refreshTodaysWeather.IsExecuting, this.forecastCommand.IsExecuting, refreshConditionsAffectedByWeatherCommand.IsExecuting, (today, forecast, conditions) => today || forecast || conditions)
                     .ToProperty(this, vm => vm.IsBusy, out this.isBusy);
-                
+
+                this.hasConditions = this.WhenAnyValue(vm => vm.ConditionsAffectedByWeather).Select(items => items != null && items.Count() > 0).ToProperty(this, vm => vm.HasConditionsAffectedByWeather);
+
                 this.WhenNavigatedTo(() => Task.Run(async () =>
                 {
                     await this.refreshTodaysWeather.Execute();
@@ -111,6 +114,7 @@ namespace WeatherStation.Windows.ViewModels
         }
 
         public IEnumerable<ConditionViewModel> ConditionsAffectedByWeather => this.conditionsAffectedByWeatherProperty.Value;
+        public bool HasConditionsAffectedByWeather => this.hasConditions.Value;
 
         public bool IsBusy => this.isBusy.Value;
 

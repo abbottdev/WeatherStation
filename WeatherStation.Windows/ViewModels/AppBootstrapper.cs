@@ -2,6 +2,7 @@
 using Splat;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Text;
@@ -60,6 +61,8 @@ namespace WeatherStation.Windows.ViewModels
                      .Subscribe();
                 }
             });
+
+            Router.Navigate.ThrownExceptions.Subscribe(ex => Debug.WriteLine(ex.Message));
 
             this.LoadCommand.Execute().Subscribe();
         }

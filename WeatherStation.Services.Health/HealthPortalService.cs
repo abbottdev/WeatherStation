@@ -40,13 +40,13 @@ namespace WeatherStation.Services.Health
 
             string name = null;
             string id = null;
-            IEnumerable<string> symptoms = null;
+            IEnumerable<Condition> symptoms = null;
             IEnumerable<string> complications = null;
             IEnumerable<string> suggestions = null;
 
             name = result.Value<string>("ConditionName");
             complications = result["Complications"].Values<string>();
-            symptoms = result["Symptoms"].Select(token => token.Value<string>("Name"));
+            symptoms = result["Symptoms"].Select(token => new Condition(token.Value<string>("Name"), token.Value<string>("Id")));
             suggestions = Enumerable.Empty<string>();
 
             condition = new ConditionSynopsis(name, id, symptoms, complications, suggestions);
